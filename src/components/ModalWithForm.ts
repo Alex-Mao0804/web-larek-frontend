@@ -1,7 +1,6 @@
 import { TPaymentMethod } from '../types';
 import { ensureElement } from '../utils/utils';
 import { IEvents } from './base/events';
-import { Modal } from './Modal';
 
 export class ModalWithForm {
 	protected submitButton: HTMLButtonElement;
@@ -61,17 +60,17 @@ export class ModalWithForm {
 		});
 		container.addEventListener('submit', (event: InputEvent) => {
 			event.preventDefault();
-			this.events.emit('form:submit', { form: this });
+			this.events.emit('formOrder:submit', { form: this });
 		});
 		this.error = ensureElement<HTMLElement>('.form__errors', container);
 	}
 
-	protected setValid(isValid: boolean) {
+	protected setValid(isValid: boolean): void {
 		this.inputs.forEach((input) => {
 			input.disabled = isValid;
 		});
 	}
-	getValues() {
+	getValues(): Record<string, string> {
 		const valuesObject: Record<string, string> = {};
 		this.inputs.forEach((element) => {
 			valuesObject[element.name] = element.value;
@@ -80,15 +79,15 @@ export class ModalWithForm {
 		valuesObject['payment'] = this.payment ? this.payment : '';
 		return valuesObject;
 	}
-	protected showInputError() {
+	protected showInputError(): void {
 		this.error.textContent = 'Заполните поля';
 		this.submitButton.disabled = true;
 	}
-	protected hideInputError() {
+	protected hideInputError(): void {
 		this.error.textContent = '';
 		this.submitButton.disabled = false;
 	}
-	render() {
+	render(): HTMLFormElement {
 		return this.container;
 	}
 }

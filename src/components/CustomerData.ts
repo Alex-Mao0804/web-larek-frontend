@@ -1,40 +1,34 @@
-import { ICustomerData, TPaymentMethod } from '../types';
-import { IEvents } from './base/events';
+import { ICustomerData, TCustomerData, TPaymentMethod } from '../types';
 
 export class CustomerData implements ICustomerData {
-	protected payment: string;
+	protected payment: TPaymentMethod;
 	protected address: string;
 	protected email: string;
 	protected phone: string;
-	protected events: IEvents;
 
-	constructor(events: IEvents) {
-		this.events = events;
-	}
+	constructor(){}
 
-	setPaymentAndDelivery(payment: TPaymentMethod, delivery: string) {
+	setPaymentAndDelivery(payment: TPaymentMethod, delivery: string): void {
 		this.payment = payment;
 		this.address = delivery;
-		this.events.emit('customer:changed');
 	}
-	setContactInfo(email: string, phone: string) {
+	setContactInfo(email: string, phone: string): void {
 		this.email = email;
 		this.phone = phone;
-		this.events.emit('customer:changed');
 	}
-	clearData() {
-		this.payment = '';
+	clearData(): void {
+		this.payment = null;
 		this.address = '';
 		this.email = '';
 		this.phone = '';
-		this.events.emit('customer:changed');
 	}
-	getCustomerData() {
-		return {
+	getCustomerData(): TCustomerData {
+		const customerData: TCustomerData = {
 			payment: this.payment,
 			address: this.address,
 			email: this.email,
 			phone: this.phone,
-		};
+		}
+		return customerData
 	}
 }

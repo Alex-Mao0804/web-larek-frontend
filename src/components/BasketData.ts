@@ -4,18 +4,15 @@ import { IEvents } from './base/events';
 export class BasketData implements IBasketData {
 	protected _items: IProductItem[] = [];
 	protected _total: number = 0;
-	protected events: IEvents;
 
-	constructor(events: IEvents) {
-		this.events = events;
-	}
+	constructor(protected events: IEvents) {}
 
-	addItem(item: IProductItem) {
+	addItem(item: IProductItem): void {
 		this.items.push(item);
 		this.events.emit('basket:changed');
 	}
 
-	removeItem(itemId: string) {
+	removeItem(itemId: string): void {
 		const index = this.items.findIndex((item) => item.id === itemId);
 		if (index >= 0) {
 			this.items.splice(index, 1);
@@ -23,13 +20,13 @@ export class BasketData implements IBasketData {
 		}
 	}
 
-	clearCart() {
+	clearCart(): void {
 		this._items = [];
 		this._total = 0;
 		this.events.emit('basket:changed');
 	}
 
-	get items() {
+	get items(): IProductItem[] {
 		return this._items;
 	}
 
@@ -37,7 +34,7 @@ export class BasketData implements IBasketData {
 		return this._items.some((item) => item.id === itemId);
 	}
 
-	get total() {
+	get total(): number {
 		return this._items.reduce((total, item) => total + item.price, 0);
 	}
 }

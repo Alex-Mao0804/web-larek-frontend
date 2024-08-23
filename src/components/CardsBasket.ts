@@ -21,17 +21,13 @@ export class CardsBasket {
 		);
 		this._basket__price.textContent = String(this.total) + ' синапсов';
 		this._orderButton.addEventListener('click', () => {
-			this.events.emit('orderButton:click');
+			this.events.emit('formOrder:open');
 		});
-	}
-
-	basketEmpty(isEmpty: boolean) {
-		this._orderButton.disabled = isEmpty;
 	}
 
 	render(data: HTMLElement[]): HTMLElement {
 		if (data.length === 0) {
-			this.basketEmpty(true);
+			this._orderButton.disabled = true;
 			return this.container;
 		}
 		let count = 1;

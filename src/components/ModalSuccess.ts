@@ -24,7 +24,7 @@ export class ModalSuccess {
 		this._description.textContent = `Списано ${total} синапсов`;
 	}
 
-	render() {
+	render(): HTMLElement {
 		return this.content;
 	}
 }

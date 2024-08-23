@@ -15,7 +15,7 @@ export class Card {
 	protected deleteBasketButton: HTMLButtonElement | null;
 	protected index: HTMLElement;
 
-	constructor(protected container: HTMLElement, events: IEvents) {
+	constructor(protected container: HTMLTemplateElement, events: IEvents) {
 		this.events = events;
 		this.cardImage = this.container.querySelector('.card__image');
 		this.cardCategory = this.container.querySelector('.card__category');
@@ -42,7 +42,7 @@ export class Card {
 		}
 	}
 
-	checkInBasket(inBasket: boolean) {
+	checkInBasket(inBasket: boolean): void {
 		if (this.inBasketButton) {
 			if (inBasket) {
 				this.inBasketButton.textContent = 'Удалить из корзины';
@@ -99,11 +99,11 @@ export class Card {
 		}
 	}
 
-	render() {
+	render(): HTMLTemplateElement {
 		return this.container;
 	}
 
-	get _id() {
+	get _id(): string {
 		return this.cardId;
 	}
 }

@@ -20,25 +20,25 @@ export class Modal {
 		this.handleEscUp = this.handleEscUp.bind(this);
 	}
 
-	open() {
+	open(): void {
 		this.container.classList.add('modal_active');
 		this.events.emit('modal:open');
 	}
 
-	close() {
+	close(): void {
 		this.container.classList.remove('modal_active');
 		this._content.innerHTML = '';
 		this.events.emit('modal:close');
 		document.removeEventListener('keyup', this.handleEscUp);
 	}
 
-	render(data: HTMLElement) {
+	render(data: HTMLElement): void {
 		this._content.innerHTML = '';
 		this._content.append(data);
 		this.open();
 		document.addEventListener('keyup', this.handleEscUp);
 	}
-	handleEscUp(evt: KeyboardEvent) {
+	protected handleEscUp(evt: KeyboardEvent): void {
 		if (evt.key === 'Escape') {
 			this.close();
 		}

@@ -15,9 +15,9 @@ import { ModalWithForm } from './components/ModalWithForm';
 import { ModalSuccess } from './components/ModalSuccess';
 
 const events = new EventEmitter();
-const productListData = new ProductListData(events);
+const productListData = new ProductListData();
 const basketData = new BasketData(events);
-const customerData = new CustomerData(events);
+const customerData = new CustomerData();
 
 const api = new Api(API_URL, settings);
 
@@ -41,6 +41,24 @@ basketButton.addEventListener('click', () => {
 	events.emit('basket:select');
 });
 
+// Загрузка из сервера продуктов и отрисовка
+api
+	.get<IApi>('/product')
+	.then((data) => {
+		productListData.products = data.items;
+		const cardsArray = productListData.products.map((card) => {
+			const cardInstant = new Card(cloneTemplate(cardCatalogTemplate), events);
+			cardInstant.setData(card);
+			return cardInstant.render();
+		});
+		const cardsContainer = new CardsCatalog(gallery);
+		cardsContainer.render(cardsArray);
+	})
+	.catch((error) => {
+		console.log(error);
+	});
+
+// Открыть корзину
 events.on('basket:select', () => {
 	const cardsArray = basketData.items.map((card) => {
 		const cardInstant = new Card(cloneTemplate(cardBasketTemplate), events);
@@ -55,18 +73,33 @@ events.on('basket:select', () => {
 	modal.render(cardsContainer.render(cardsArray));
 });
 
+// Добавим покупку в корзину
+events.on('card:submit', (data: { card: Card }) => {
+	const { card } = data;
+	basketData.addItem(productListData.getProduct(card._id));
+	modal.close();
+});
+
+// Посчитаем кол-во товаров в корзине
+events.on('basket:changed', () => {
+	basketCounter.textContent = String(basketData.items.length);
+});
+
+// Удалить из корзины
 events.on('basketCard:delete', (data: { card: Card }) => {
 	const { card } = data;
 	basketData.removeItem(card._id);
 	events.emit('basket:select');
 });
 
-events.on('orderButton:click', () => {
+// Открыть форму оформления (способ оплаты и адрес)
+events.on('formOrder:open', () => {
 	const form = new ModalWithForm(cloneTemplate(orderTemplate), events);
 	modal.render(form.render());
 });
 
-events.on('form:submit', (data: { form: ModalWithForm }) => {
+// Добавить данные покупателя в объект
+events.on('formOrder:submit', (data: { form: ModalWithForm }) => {
 	const { form } = data;
 	if (form.getValues().formName === 'order') {
 		customerData.setPaymentAndDelivery(
@@ -80,12 +113,47 @@ events.on('form:submit', (data: { form: ModalWithForm }) => {
 		modal.render(formContacts.render());
 	} else {
 		customerData.setContactInfo(form.getValues().email, form.getValues().phone);
-		events.emit('orderSend:click');
+		events.emit('dataOrder:post');
 	}
 });
 
-events.on('orderSend:click', () => {
-	const order = Object.assign(
+// Закрыть окно успешного оформления и все стереть
+events.on('modalSuccess:close', () => {
+	modal.close();
+	basketData.clearCart();
+	customerData.clearData();
+});
+
+// Открыть карточку
+events.on('card:select', (data: { card: Card }) => {
+	const { card } = data;
+	const cardPreview = new Card(cloneTemplate(cardPreviewTemplate), events);
+	cardPreview.setData(productListData.getProduct(card._id));
+	cardPreview.checkInBasket(basketData.checkMatch(card._id));
+	modal.render(cardPreview.render());
+});
+
+// Блокируем прокрутку страницы если открыта модалка
+events.on('modal:open', () => {
+	document.body.style.overflow = 'hidden';
+});
+
+// ... и разблокируем
+events.on('modal:close', () => {
+	document.body.style.overflow = '';
+	//разобраться с тем что модалка фиксируется в начале экрана
+});
+
+// Из превью карточки удалим из корзины
+events.on('card:delete', (data: { card: Card }) => {
+	const { card } = data;
+	basketData.removeItem(card._id);
+	modal.close();
+});
+
+// Отправить заказ на сервер
+events.on('dataOrder:post', () => {
+	const order: IOrder = Object.assign(
 		{},
 		{ items: basketData.items.map((item) => item.id) },
 		{ total: basketData.total },
@@ -104,64 +172,4 @@ events.on('orderSend:click', () => {
 		.catch((error) => {
 			console.log(error);
 		});
-});
-
-events.on('modalSuccess:close', () => {
-	modal.close();
-	basketData.clearCart();
-	customerData.clearData();
-});
-
-api
-	.get<IApi>('/product')
-	.then((data) => {
-		productListData.products = data.items;
-		const cardsArray = productListData.products.map((card) => {
-			const cardInstant = new Card(cloneTemplate(cardCatalogTemplate), events);
-			cardInstant.setData(card);
-			return cardInstant.render();
-		});
-		const cardsContainer = new CardsCatalog(gallery);
-		cardsContainer.render(cardsArray);
-	})
-	.catch((error) => {
-		console.log(error);
-	});
-
-// Открыть карточку
-events.on('card:select', (data: { card: Card }) => {
-	const { card } = data;
-	const cardPreview = new Card(cloneTemplate(cardPreviewTemplate), events);
-	cardPreview.setData(productListData.getProduct(card._id));
-	cardPreview.checkInBasket(basketData.checkMatch(card._id));
-	modal.render(cardPreview.render());
-});
-
-events.on('card:delete', (data: { card: Card }) => {
-	const { card } = data;
-	basketData.removeItem(card._id);
-	modal.close();
-});
-
-// Блокируем прокрутку страницы если открыта модалка
-events.on('modal:open', () => {
-	document.body.style.overflow = 'hidden';
-});
-
-// ... и разблокируем
-events.on('modal:close', () => {
-	document.body.style.overflow = '';
-	//разобраться с тем что модалка фиксируется в начале экрана
-});
-
-// Добавим покупку в корзину
-events.on('card:submit', (data: { card: Card }) => {
-	const { card } = data;
-	basketData.addItem(productListData.getProduct(card._id));
-	modal.close();
-});
-
-// Посчитаем кол-во товаров в корзине
-events.on('basket:changed', () => {
-	basketCounter.textContent = String(basketData.items.length);
 });
