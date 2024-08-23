@@ -14,10 +14,11 @@ export interface IProductListData {
   preview: string | null 
   addProduct: (product: IProductItem) => void //setter
   getProduct: (productId: string) => IProductItem | undefined 
-  getCatalog: () => IProductItem[] //getter
+  // getCatalog: () => IProductItem[]
+  // getCatalog: () => IProductItem[] //getter
 }
 
-export type TPaymentMethod = 'Онлайн' | 'При получении'
+export type TPaymentMethod = 'cash' | 'card'
 
 export interface IOrder {
   payment: TPaymentMethod
@@ -32,10 +33,6 @@ export type TOrderForm1 = Pick<IOrder, 'payment' | 'address'>
 export type TOrderForm2 = Pick<IOrder, 'email' | 'phone'>
 
 export interface ICustomerData {
-  payment: string
-  address: string
-  email: string
-  phone: string
   setPaymentAndDelivery(payment: TPaymentMethod, delivery: string): void
   setContactInfo(email: string, phone: string): void
   clearData(): void
@@ -50,8 +47,9 @@ export interface IBasketData {
   addItem: (item: IProductItem) => void
   removeItem: (itemId: string) => void
   clearCart: () => void
-  getItems: () => IProductItem[]
-  getTotal:() => number
 }
 
-
+export interface IApi {
+  items: IProductItem[]
+  total: number
+}

@@ -302,7 +302,7 @@ constructor(container: HTMLElement, total: number)
 - `edit:input` - изменение данных в формах order и contacts
 - `card:submit` - добавление карточки в данные корзины покупок
 - `success:submit` - закрытие модального окна и возврат к покупкам (очищение всех данных)
-- `BasketCard:delete` - удаление продукта из корзины
+- `basketCard:delete` - удаление продукта из корзины
 - `edit:validation` - событие, сообщающее о необходимости валидации формы профиля
 
 
