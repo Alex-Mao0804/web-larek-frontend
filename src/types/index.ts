@@ -28,8 +28,8 @@ export interface IOrder {
 export type TCustomerData = Pick<IOrder, 'email' | 'phone' | 'address' | 'payment'>
 
 export interface ICustomerData {
-  setPaymentAndDelivery(payment: TPaymentMethod, delivery: string): void
-  setContactInfo(email: string, phone: string): void
+  setPaymentAndDelivery(dataForm: Record<string, string>): void
+  setContactInfo(dataForm: Record<string, string>): void
   clearData(): void
   getCustomerData(): object
 }

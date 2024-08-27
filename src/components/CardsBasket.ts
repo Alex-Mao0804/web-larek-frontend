@@ -7,8 +7,7 @@ export class CardsBasket {
 	_basket__price: HTMLSpanElement;
 	constructor(
 		protected container: HTMLTemplateElement,
-		protected events: IEvents,
-		protected total: number
+		protected events: IEvents
 	) {
 		this._content = ensureElement<HTMLElement>('.basket__list', container);
 		this._orderButton = ensureElement<HTMLButtonElement>(
@@ -19,17 +18,23 @@ export class CardsBasket {
 			'.basket__price',
 			container
 		);
-		this._basket__price.textContent = String(this.total) + ' синапсов';
+
 		this._orderButton.addEventListener('click', () => {
 			this.events.emit('formOrder:open');
 		});
 	}
 
-	render(data: HTMLElement[]): HTMLElement {
+	render(data: HTMLElement[], total: number): HTMLElement {
+		this._content.innerHTML = '';
+		this._basket__price.textContent = String(total) + ' синапсов';
+
 		if (data.length === 0) {
 			this._orderButton.disabled = true;
 			return this.container;
+		} else {
+			this._orderButton.disabled = false;
 		}
+
 		let count = 1;
 		data.forEach((card) => {
 			const index = card.querySelector('.basket__item-index');

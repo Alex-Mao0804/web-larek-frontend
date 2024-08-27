@@ -8,13 +8,13 @@ export class CustomerData implements ICustomerData {
 
 	constructor(){}
 
-	setPaymentAndDelivery(payment: TPaymentMethod, delivery: string): void {
-		this.payment = payment;
-		this.address = delivery;
+	setPaymentAndDelivery(dataForm: Record<string, string>): void {
+		this.payment = dataForm.payment as TPaymentMethod;
+		this.address = dataForm.address;
 	}
-	setContactInfo(email: string, phone: string): void {
-		this.email = email;
-		this.phone = phone;
+	setContactInfo(dataForm: Record<string, string>): void {
+		this.email = dataForm.email;
+		this.phone = dataForm.phone;
 	}
 	clearData(): void {
 		this.payment = null;

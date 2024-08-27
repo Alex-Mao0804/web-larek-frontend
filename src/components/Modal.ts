@@ -35,7 +35,6 @@ export class Modal {
 	render(data: HTMLElement): void {
 		this._content.innerHTML = '';
 		this._content.append(data);
-		this.open();
 		document.addEventListener('keyup', this.handleEscUp);
 	}
 	protected handleEscUp(evt: KeyboardEvent): void {

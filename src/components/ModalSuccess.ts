@@ -7,8 +7,7 @@ export class ModalSuccess {
 
 	constructor(
 		protected content: HTMLElement,
-		protected events: IEvents,
-		protected total: number
+		protected events: IEvents
 	) {
 		this._submitButton = ensureElement<HTMLButtonElement>(
 			'.order-success__close',
@@ -21,10 +20,10 @@ export class ModalSuccess {
 		this._submitButton.addEventListener('click', () => {
 			this.events.emit('modalSuccess:close');
 		});
-		this._description.textContent = `Списано ${total} синапсов`;
 	}
 
-	render(): HTMLElement {
+	render(total: number): HTMLElement {
+		this._description.textContent = `Списано ${total} синапсов`;
 		return this.content;
 	}
 }

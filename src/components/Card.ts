@@ -37,8 +37,8 @@ export class Card {
 
 		if (this.deleteBasketButton) {
 			this.deleteBasketButton.addEventListener('click', () =>
-				this.events.emit('basketCard:delete', { card: this })
-			);
+				this.events.emit('basket:delete', { card: this, basket: true })
+			)
 		}
 	}
 
@@ -47,12 +47,12 @@ export class Card {
 			if (inBasket) {
 				this.inBasketButton.textContent = 'Удалить из корзины';
 				this.inBasketButton.addEventListener('click', () =>
-					this.events.emit('card:delete', { card: this })
+					this.events.emit('basket:delete', { card: this, basket: false })
 				);
 			} else {
 				this.inBasketButton.textContent = 'В корзину';
 				this.inBasketButton.addEventListener('click', () =>
-					this.events.emit('card:submit', { card: this })
+					this.events.emit('basket: add', { card: this })
 				);
 			}
 		}
