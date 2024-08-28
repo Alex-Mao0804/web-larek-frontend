@@ -187,6 +187,7 @@ export type TCustomerData = Pick<IOrder, 'email' | 'phone' | 'address' | 'paymen
 Методы:
 - checkInBasket(inBasket: boolean): void - в зависимости от наличия товара в корзине используя значение булева, устанавливает для кнопки название, а так же устанавливает разные события на нажатие. (Исп. для превью карточки )
 - setData(cardData: IProductItem): void - заполняет атрибуты элементов карточки данными
+- setAndCheck(cardData: IProductItem, inBasket: boolean): void - объединяет в себе два предыдущих метода
 - render(): HTMLTemplateElement - метод возвращает полностью заполненную карточку с установленными слушателями
 -
 - геттер id возвращает уникальный id карточки

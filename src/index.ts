@@ -63,8 +63,7 @@ events.on('basket:render', () => {
 
 events.on('preview:render', (card: Card) => {
 	const cardPreview = new Card(cloneTemplate(cardPreviewTemplate), events);
-	cardPreview.setData(productListData.getProduct(card._id));
-	cardPreview.checkInBasket(basketData.checkMatch(card._id));
+	cardPreview.setAndCheck(productListData.getProduct(card._id), basketData.checkMatch(card._id));
 	modal.render(cardPreview.render());
 });
 
@@ -95,8 +94,7 @@ events.on('basket:open', () => {
 events.on('basket: add', (data: { card: Card }) => {
 	const { card } = data;
 	basketData.addItem(productListData.getProduct(card._id));
-	events.emit('preview:render', card);
-	modal.close();
+	card.checkInBasket(true);
 });
 
 // Посчитаем кол-во товаров в корзине
@@ -111,7 +109,7 @@ events.on('basket:delete', (data: { card: Card; basket: boolean }) => {
 	if (basket) {
 		events.emit('basket:render');
 	} else {
-		events.emit('preview:render', card);
+		card.checkInBasket(false);
 	}
 });
 

@@ -99,6 +99,16 @@ export class Card {
 		}
 	}
 
+	/**
+	 * Установить данные и проверить наличие в корзине
+	 * @param cardData 
+	 * @param inBasket 
+	 */
+	setAndCheck(cardData: IProductItem, inBasket: boolean): void {
+		this.setData(cardData);
+		this.checkInBasket(inBasket);
+	}
+
 	render(): HTMLTemplateElement {
 		return this.container;
 	}
